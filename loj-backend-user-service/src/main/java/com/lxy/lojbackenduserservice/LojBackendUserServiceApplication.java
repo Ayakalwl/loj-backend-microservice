@@ -1,0 +1,13 @@
+package com.lxy.lojbackenduserservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LojBackendUserServiceApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(LojBackendUserServiceApplication.class, args);
+    }
+
+}
