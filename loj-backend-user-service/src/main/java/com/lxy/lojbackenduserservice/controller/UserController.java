@@ -35,7 +35,7 @@ import static com.lxy.lojbackenduserservice.service.impl.UserServiceImpl.SALT;
  * 
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/")
 @Slf4j
 public class UserController {
 

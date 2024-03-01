@@ -20,8 +20,8 @@ import com.lxy.lojbackendmodel.model.vo.QuestionSubmitVO;
 import com.lxy.lojbackendquestionservice.mapper.QuestionSubmitMapper;
 import com.lxy.lojbackendquestionservice.service.QuestionService;
 import com.lxy.lojbackendquestionservice.service.QuestionSubmitService;
-import com.lxy.lojbackendserviceclient.service.JudgeService;
-import com.lxy.lojbackendserviceclient.service.UserService;
+import com.lxy.lojbackendserviceclient.service.JudgeFeignClient;
+import com.lxy.lojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -45,11 +45,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private QuestionService questionService;
 
     @Resource
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
     @Resource
     @Lazy
-    private JudgeService judgeService;
+    private JudgeFeignClient judgeFeignClient;
 
     /**
      * 提交题目
@@ -93,7 +93,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long questionSubmitId = questionSubmit.getId();
         // 执行判题服务
         CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
+            judgeFeignClient.doJudge(questionSubmitId);
         });
         return questionSubmit.getId();
     }
@@ -132,7 +132,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         // 脱敏：仅本人和管理员能看见自己（提交 userId 和登录用户 id 不同）提交的代码
         long userId = loginUser.getId();
         // 处理脱敏
-        if (userId != questionSubmit.getUserId() && !userService.isAdmin(loginUser)){
+        if (userId != questionSubmit.getUserId() && !userFeignClient.isAdmin(loginUser)){
             questionSubmitVO.setCode(null);
         }
         return questionSubmitVO;
