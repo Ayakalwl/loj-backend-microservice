@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class LojBackendJudgeServiceApplication {
 
     public static void main(String[] args) {
+        // 初始化消息队列
+        InitRabbitMq.doInit();
         SpringApplication.run(LojBackendJudgeServiceApplication.class, args);
     }
 
