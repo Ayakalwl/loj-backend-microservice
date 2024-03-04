@@ -18,6 +18,7 @@ import com.lxy.lojbackendmodel.model.enums.QuestionSubmitLanguageEnum;
 import com.lxy.lojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.lxy.lojbackendmodel.model.vo.QuestionSubmitVO;
 import com.lxy.lojbackendquestionservice.mapper.QuestionSubmitMapper;
+import com.lxy.lojbackendquestionservice.rabbitmq.MyMessageProducer;
 import com.lxy.lojbackendquestionservice.service.QuestionService;
 import com.lxy.lojbackendquestionservice.service.QuestionSubmitService;
 import com.lxy.lojbackendserviceclient.service.JudgeFeignClient;
@@ -50,6 +51,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     @Lazy
     private JudgeFeignClient judgeFeignClient;
+
+    @Resource
+    private MyMessageProducer myMessageProducer;
 
     /**
      * 提交题目
@@ -91,10 +95,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
         }
         Long questionSubmitId = questionSubmit.getId();
+        // 发送消息
+        myMessageProducer.sendMessage("code_exchange", "my_routingKey", String.valueOf(questionSubmitId));
         // 执行判题服务
-        CompletableFuture.runAsync(() -> {
-            judgeFeignClient.doJudge(questionSubmitId);
-        });
+//        CompletableFuture.runAsync(() -> {
+//            judgeFeignClient.doJudge(questionSubmitId);
+//        });
         return questionSubmit.getId();
     }
 

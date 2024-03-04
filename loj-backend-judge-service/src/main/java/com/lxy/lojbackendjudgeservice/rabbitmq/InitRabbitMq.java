@@ -1,4 +1,4 @@
-package com.lxy.lojbackendjudgeservice;
+package com.lxy.lojbackendjudgeservice.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
