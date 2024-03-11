@@ -5,7 +5,7 @@ FROM openjdk:8-jdk-alpine
 WORKDIR /app
 
 # 设置JVM的初始堆内存和最大堆内存
-ENV JAVA_OPTS="-Xms256m -Xmx256m"
+ENV JAVA_OPTS="-Xms128m -Xmx128m"
 
 # 将 jar 包添加到工作目录，比如 target/yuoj-backend-user-service-0.0.1-SNAPSHOT.jar
 ADD target/loj-backend-user-service-0.0.1-SNAPSHOT.jar .

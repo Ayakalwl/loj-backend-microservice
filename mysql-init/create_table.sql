@@ -1,6 +1,6 @@
-create datebase if not exists loj;
+create database if not exists loj;
 
-user loj;
+use loj;
 
 create table if not exists question
 (
