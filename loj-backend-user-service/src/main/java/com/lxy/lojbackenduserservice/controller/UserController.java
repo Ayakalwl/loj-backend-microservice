@@ -56,13 +56,14 @@ public class UserController {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        String userName = userRegisterRequest.getUserName();
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+        if (StringUtils.isAnyBlank(userName, userAccount, userPassword, checkPassword)) {
             return null;
         }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        long result = userService.userRegister(userName, userAccount, userPassword, checkPassword);
         return ResultUtils.success(result);
     }
 
@@ -133,8 +134,8 @@ public class UserController {
         }
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
-        // 默认密码 12345678
-        String defaultPassword = "12345678";
+        // 默认密码 sd5327978qaz~78
+        String defaultPassword = "sd5327978qaz~78";
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + defaultPassword).getBytes());
         user.setUserPassword(encryptPassword);
         boolean result = userService.save(user);
