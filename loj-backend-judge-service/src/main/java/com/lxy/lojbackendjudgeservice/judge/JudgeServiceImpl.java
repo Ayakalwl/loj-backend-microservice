@@ -13,6 +13,7 @@ import com.lxy.lojbackendmodel.model.codesandbox.JudgeInfo;
 import com.lxy.lojbackendmodel.model.dto.question.JudgeCase;
 import com.lxy.lojbackendmodel.model.entity.Question;
 import com.lxy.lojbackendmodel.model.entity.QuestionSubmit;
+import com.lxy.lojbackendmodel.model.enums.JudgeInfoMessageEnum;
 import com.lxy.lojbackendmodel.model.enums.QuestionSubmitStatusEnum;
 import com.lxy.lojbackendserviceclient.service.QuestionFeignClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,6 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Resource
     private QuestionFeignClient questionFeignClient;
-
 
     @Resource
     private JudgeManager judgeManager;
@@ -48,6 +48,9 @@ public class JudgeServiceImpl implements JudgeService {
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "题目不存在");
         }
+        // 更新题目提交数
+        question.setSubmitNum(question.getSubmitNum() + 1);
+        questionFeignClient.updateQuestionById(question);
         // 2）如果题目提交状态不为等待中，就不用重复执行了
         if (!questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.WAITING.getValue())) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "题目正在判题中");
@@ -91,6 +94,11 @@ public class JudgeServiceImpl implements JudgeService {
         questionSubmitUpdate.setId(questionSubmitId);
         questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
         questionSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo));
+        // 更新题目通过数
+        if (judgeInfo.getMessage().equals(JudgeInfoMessageEnum.ACCEPTED.getValue())) {
+            question.setAcceptedNum(question.getAcceptedNum() + 1);
+        }
+        questionFeignClient.updateQuestionById(question);
         update = questionFeignClient.updateQuestionSubmitById(questionSubmitUpdate);
         if (!update) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"题目状态更新错误");
